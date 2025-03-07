@@ -24,5 +24,3 @@ Verifichiamo su Postman che la risposta sia corretta
 
 <!-- Bonus: -->
 Far sì che la SHOW restituisca il post comprensivo di tag, recuperandoli grazie alla relazione tra post e tags, esistente sul database
-Buon lavoro! :astronauta:
-.. e buon w-e :donna_che_fa_la_ruota:

@@ -1,50 +1,26 @@
 // ci spostiamo i dati in cima
-const postsData = require('../data/postsData');
+const connection = require('../data/db')
 
 
 //FUNCTION -> inseriamo le funzioni delle operazioni crud e la loro logica dandogli i nomi delle stesse operazione
 // index
 function index(req, res) {
-    // res.json(postsData);
-    // inizialmente il post filtrato sarà uguale a quello originale
-    let filteredPostsData = postsData;
-    // se la richiesta contiene un filtro allora filtriamo i posts
-    if (req.query.tags) {
-        // filtriamo i posts
-        filteredPostsData = postsData.filter(post => post.tags.includes(req.query.tags));
-    };
+    // prepariamo la query
+    const postSql = `
+        SELECT *
+        FROM posts
+    `;
 
-    // restituiamo il dato in formato json
-    res.json(filteredPostsData);
+    // eseguiamo la query
+    connection.query(postSql, (err, results) => {
+        if (err) return res.status(500).json({ error: 'Database query failed' });
+        res.json(results);
+    })
 }
 
 // show
 function show(req, res) {
-    // res.send(`mostra il post ${req.params.id}`); 
-
-    // recuperiamo il parametro dinamico dell'id e convertiamolo in numero salvandolo in variabile
-    const id = parseInt(req.params.id);
-
-    // utilizziamo il metodo find per identificare e farci restituire l'elemento corrispondente
-    const post = postsData.find(post => post.id === id);
-    // const post = postsData.find(post =>{
-    //   if(post.id === id){
-    //     return post }
-    // })
-
-    //Risoluzione undefined
-    if (!post) {
-        // ritorno lo stato di errore 404
-        res.status(404)
-        return res.json({
-            error: 'not found',
-            message: 'il post non è esistente',
-            help: "verifica se l'id è corretto"
-        });
-    };
-
-    // restituiamo il dato in formato json
-    res.json(post);
+    const id = req.params.id
 };
 
 // store

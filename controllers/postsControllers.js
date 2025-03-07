@@ -22,7 +22,7 @@ function index(req, res) {
 function show(req, res) {
 
     // recuperiamo l'id dall'URL
-    const id = req.params.id
+    const { id } = req.params
 
     // prepariamo la query sql
     const postSql = `

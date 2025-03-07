@@ -77,7 +77,6 @@ function store(req, res) {
 function update(req, res) {
     // res.send(`aggiorna il post ${req.params.id}`);
     console.log(req.body);
-    isanfjnfs;
     // recuperiamo il parametro dinamico dell'id e convertiamolo in numero salvandolo in variabile
     const id = parseInt(req.params.id);
 

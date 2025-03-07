@@ -119,35 +119,22 @@ function modify(req, res) {
 
 // destroy
 function destroy(req, res) {
-    // res.send(`elimina il post ${req.params.id}`);
 
-    // recuperiamo il parametro dinamico dell'id e convertiamolo in numero salvandolo in variabile
-    const id = parseInt(req.params.id);
+    // recuperiamo l'id dall'URL 
+    const { id } = req.params;
 
-    // utilizziamo il metodo find per identificare e farci restituire l'elemento corrispondente
-    const post = postsData.find(post => post.id === id);
-
-    //Risoluzione undefined
-    if (!post) {
-        // ritorno lo stato di errore 404
-        res.status(404)
-        return res.json({
-            error: 'not found',
-            message: 'il post non è esistente',
-            help: "verifica se l'id è corretto"
-        });
-    };
+    const postSql = `
+        DELETE
+        FROM posts
+        WHERE id = ?
+    `
 
 
-    //se trova l'elemento rimuovilo dall'array di oggetti
-    postsData.splice(postsData.indexOf(post), 1);
-
-    // mostrami l'array aggiornato
-    console.log(postsData);
-
-    //Restituiamo al Client che è stato effettuato tutto con successo
-    res.sendStatus(204); //204 ok, nessun contenuto
-
+    // eliminiamo il post 
+    connection.query(postSql, [id], (err) => {
+        if (err) return res.status(500).json({ error: 'Failed to delete post' });
+        res.sendStatus(204)
+    });
 };
 
 module.exports = { index, show, store, update, modify, destroy };

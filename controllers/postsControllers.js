@@ -20,7 +20,41 @@ function index(req, res) {
 
 // show
 function show(req, res) {
+
+    // recuperiamo l'id dall'URL
     const id = req.params.id
+
+    // prepariamo la query sql
+    const postSql = `
+        SELECT *
+        FROM posts
+        WHERE id = ?
+    `
+
+    const tagsSql = `
+        SELECT t.*
+        FROM tags AS t
+        JOIN post_tag AS pt ON t.id = pt.tag_id
+        WHERE pt.post_id = ?
+    `
+
+    // prepariamo la query per cercare il post specifico
+    connection.query(postSql, [id], (err, postResults) => {
+        if (err) return res.status(500).json({ error: 'Database query failed' });
+        if (postResults.length === 0) return res.status(404).json({ error: 'Posts not found' });
+
+        // recuperiamo il post 
+        const post = postResults[0];
+
+        // se è andata bene eseguiamo la seconda query per i tag
+        connection.query(tagsSql, [id], (err, tagsResults) => {
+            if (err) return res.status(500).json({ error: 'Database query failed' });
+            if (tagsResults.length === 0) return res.status(404).json({ error: 'tags not found' });
+            // aggiungiamoli i tag al post
+            post.tags = tagsResults
+            res.json(post)
+        })
+    })
 };
 
 // store
@@ -123,6 +157,7 @@ function destroy(req, res) {
     // recuperiamo l'id dall'URL 
     const { id } = req.params;
 
+    // prepariamo la query sql
     const postSql = `
         DELETE
         FROM posts
@@ -130,7 +165,7 @@ function destroy(req, res) {
     `
 
 
-    // eliminiamo il post 
+    // prepariamo la query per eliminare il singolo post
     connection.query(postSql, [id], (err) => {
         if (err) return res.status(500).json({ error: 'Failed to delete post' });
         res.sendStatus(204)
